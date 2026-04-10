@@ -101,6 +101,7 @@
         <p>記録の深部に到達したことを確認しました。</p>
         <p>鍵の照合が完了しています。</p>
         <a class="btn" href="#" onclick="openArchive(event)">禁書を開く</a>
+        ${seenForbidden ? `<br><a class="btn" href="new-record.html">次の記録へ</a>` : ""}
         <div class="sub">${seenForbidden ? "※ あなたはすでに記録されています" : "※ 内部ページのパスはあとで調整できます"}</div>
       `;
 
