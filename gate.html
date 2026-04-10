@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>禁書室ゲート</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: #e8ebf2;
+      font-family: sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .gate-box {
+      width: min(92vw, 720px);
+      background: rgba(10, 12, 16, 0.88);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      padding: 28px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 12px;
+      line-height: 1.8;
+      opacity: 0.92;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #e8ebf2;
+      border: 1px solid rgba(140,183,255,0.5);
+      background: rgba(140,183,255,0.12);
+    }
+
+    .sub {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: 0.65;
+    }
+  </style>
+</head>
+<body>
+  <div class="gate-box" id="gate">
+    <div class="eyebrow">FORBIDDEN ARCHIVE</div>
+    <h2>判定中…</h2>
+    <p>記録の整合性を確認しています。</p>
+  </div>
+
+  <script>
+    const trueEndSeen = localStorage.getItem("cheshire_true_end") === "seen";
+    const gate = document.getElementById("gate");
+
+    if (trueEndSeen) {
+      gate.innerHTML = `
+        <div class="eyebrow">FORBIDDEN ARCHIVE</div>
+        <h2>入室が許可されました</h2>
+        <p>記録の深部に到達したことを確認しました。</p>
+        <p>鍵の照合が完了しています。</p>
+        <a class="btn" href="/4-inner">禁書を開く</a>
+        <div class="sub">※ 内部ページのパスはあとで調整できます</div>
+      `;
+    } else {
+      gate.innerHTML = `
+        <div class="eyebrow">FORBIDDEN ARCHIVE</div>
+        <h2>入室できません</h2>
+        <p>この部屋は、特定の記録を読了した者にのみ開かれます。</p>
+        <p>先に記録室の奥を確認してください。</p>
+      `;
+    }
+  </script>
+</body>
+</html>
