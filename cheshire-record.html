@@ -698,6 +698,9 @@
       statusPill.textContent = scene.ending ? "状態: エンディング到達" : "状態: プレイ中";
 
       if (scene.ending) {
+        
+          localStorage.setItem("cheshire_true_end", "seen");
+        
         const btn = document.createElement("button");
         btn.textContent = "最初に戻る";
         btn.addEventListener("click", () => renderScene("start"));
