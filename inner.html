@@ -39,6 +39,17 @@ h1 {
 .changed {
   color: #ffb3b3;
 }
+
+.btn {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #e8ebf2;
+  border: 1px solid rgba(140,183,255,0.5);
+  background: rgba(140,183,255,0.12);
+}
 </style>
 </head>
 
@@ -62,9 +73,13 @@ h1 {
   <p class="small" id="subText">
     Record Accepted.
   </p>
+
+  <a href="gate.html" class="btn">戻る</a>
 </div>
 
 <script>
+  localStorage.setItem("cheshire_seen_forbidden", "true");
+
   setTimeout(() => {
     document.getElementById("title").innerText = "禁書は読了されました";
     document.getElementById("title").classList.add("changed");
@@ -83,10 +98,5 @@ h1 {
   }, 4000);
 </script>
 
-  <script>
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem("cheshire_seen_forbidden", "true");
-});
-</script>
 </body>
 </html>
