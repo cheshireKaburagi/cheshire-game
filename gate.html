@@ -82,7 +82,7 @@
     const seenForbidden = localStorage.getItem("cheshire_seen_forbidden") === "true";
     const gate = document.getElementById("gate");
     const hour = new Date().getHours();
-   const isNight = true;
+    const isNight = (hour >= 22 || hour <= 4);
 
     function openArchive(event) {
       if (event) event.preventDefault();
