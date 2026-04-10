@@ -79,14 +79,15 @@
   const trueEndSeen = localStorage.getItem("cheshire_true_end") === "seen";
   const gate = document.getElementById("gate");
 
-  function openArchive() {
-    document.body.style.transition = "0.5s";
-    document.body.style.opacity = "0";
+function openArchive() {
+  document.body.style.transition = "0.5s";
+  document.body.style.opacity = "0";
+  document.body.style.filter = "blur(6px)";
 
-    setTimeout(() => {
-      location.href = "https://cheshirekaburagi.github.io/cheshire-game/inner.html";
-    }, 500);
-  }
+  setTimeout(() => {
+    location.href = "https://cheshirekaburagi.github.io/cheshire-game/inner.html";
+  }, 500);
+}
 
   if (trueEndSeen) {
     gate.innerHTML = `
