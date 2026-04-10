@@ -697,22 +697,25 @@
       choicesEl.innerHTML = "";
       statusPill.textContent = scene.ending ? "状態: エンディング到達" : "状態: プレイ中";
 
-      if (scene.ending) {
-        
-          localStorage.setItem("cheshire_true_end", "seen");
-        
-        const btn = document.createElement("button");
-        btn.textContent = "最初に戻る";
-        btn.addEventListener("click", () => renderScene("start"));
-        choicesEl.appendChild(btn);
+if (scene.ending) {
+  if (sceneId === "ending_core") {
+    localStorage.setItem("cheshire_true_end", "seen");
+  }
 
-        const mark = document.createElement("div");
-        mark.className = "endmark";
-        mark.textContent = "RECORD CLOSED";
-        hintEl.appendChild(document.createElement("br"));
-        hintEl.appendChild(mark);
-        return;
-      }
+  const btn = document.createElement("button");
+  btn.textContent = "最初に戻る";
+  btn.addEventListener("click", () => renderScene("start"));
+  choicesEl.appendChild(btn);
+
+  const mark = document.createElement("div");
+  mark.className = "endmark";
+  mark.textContent = "RECORD CLOSED";
+  hintEl.appendChild(document.createElement("br"));
+  hintEl.appendChild(mark);
+
+  return;
+}
+
 
       for (const choice of scene.choices || []) {
         const btn = document.createElement("button");
