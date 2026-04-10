@@ -80,19 +80,44 @@ h1 {
 <script>
   localStorage.setItem("cheshire_seen_forbidden", "true");
 
+  let forbiddenCount = parseInt(localStorage.getItem("cheshire_forbidden_count") || "0", 10);
+  forbiddenCount += 1;
+  localStorage.setItem("cheshire_forbidden_count", forbiddenCount);
+
   setTimeout(() => {
-    document.getElementById("title").innerText = "禁書は読了されました";
-    document.getElementById("title").classList.add("changed");
+    const title = document.getElementById("title");
+    const mainText = document.getElementById("mainText");
+    const subText = document.getElementById("subText");
 
-    document.getElementById("mainText").innerHTML = `
-      ここに来た時点で、記録はあなたを含んでいます。<br><br>
-      もう「読む前」には戻れません。<br><br>
-      戻ることは可能です。<br>
-      ですが、それは出口ではありません。<br><br>
-      本当に、それでいいのですか？<br>
-    `;
+    if (forbiddenCount >= 3) {
+      title.innerText = "禁書はすでにあなたを読了しています";
+      title.classList.add("changed");
 
-    document.getElementById("subText").innerText = "Record Updated.";
+      mainText.innerHTML = `
+        この記録を繰り返し観測したため、内容の固定が失われました。<br><br>
+        あなたが読んでいるのではありません。<br>
+        すでに記録の側が、あなたを参照しています。<br><br>
+        同じ文章だったはずだと、まだ思いますか？<br><br>
+        戻ることは可能です。<br>
+        ですが、戻った先も以前と同じとは限りません。<br>
+      `;
+
+      subText.innerText = "Record Corrupted.";
+    } else {
+      title.innerText = "禁書は読了されました";
+      title.classList.add("changed");
+
+      mainText.innerHTML = `
+        ここに来た時点で、記録はあなたを含んでいます。<br><br>
+        もう「読む前」には戻れません。<br><br>
+        戻ることは可能です。<br>
+        ですが、それは出口ではありません。<br><br>
+        本当に、それでいいのですか？<br>
+      `;
+
+      subText.innerText = "Record Updated.";
+    }
+
     document.body.style.background = "#05070d";
     document.body.style.filter = "blur(0.3px)";
   }, 4000);
