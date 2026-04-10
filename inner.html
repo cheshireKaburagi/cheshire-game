@@ -83,5 +83,10 @@ h1 {
   }, 4000);
 </script>
 
+  <script>
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("cheshire_seen_forbidden", "true");
+});
+</script>
 </body>
 </html>
