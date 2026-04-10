@@ -2,14 +2,17 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>禁書内包</title>
 <style>
 body {
+  margin: 0;
   background: #0a0f1c;
   color: #e0e6ff;
   font-family: "Yu Mincho", serif;
   padding: 40px;
   line-height: 1.8;
+  transition: background 1.5s ease, color 1.5s ease, filter 1.5s ease;
 }
 
 .box {
@@ -19,10 +22,12 @@ body {
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(20,25,40,0.6);
   backdrop-filter: blur(10px);
+  transition: transform 1.5s ease, opacity 1.5s ease;
 }
 
 h1 {
   color: #8aa2ff;
+  transition: color 1.5s ease;
 }
 
 .small {
@@ -30,31 +35,53 @@ h1 {
   opacity: 0.6;
   margin-top: 30px;
 }
+
+.changed {
+  color: #ffb3b3;
+}
 </style>
 </head>
 
 <body>
 
-<div class="box">
-<h1>禁書内包</h1>
+<div class="box" id="box">
+  <h1 id="title">禁書内包</h1>
 
-<p>
-記録は、すでに開かれている。<br><br>
+  <p id="mainText">
+    記録は、すでに開かれている。<br><br>
 
-あなたがここに辿り着いた時点で、<br>
-観測は成立している。<br><br>
+    あなたがここに辿り着いた時点で、<br>
+    観測は成立している。<br><br>
 
-戻ることは可能だ。<br>
-だが、それは“知らなかった状態に戻る”だけだ。<br><br>
+    戻ることは可能だ。<br>
+    だが、それは“知らなかった状態に戻る”だけだ。<br><br>
 
-本当に、それでいいのか？<br>
-</p>
+    本当に、それでいいのか？<br>
+  </p>
 
-<p class="small">
-Record Accepted.
-</p>
-
+  <p class="small" id="subText">
+    Record Accepted.
+  </p>
 </div>
+
+<script>
+  setTimeout(() => {
+    document.getElementById("title").innerText = "禁書は読了されました";
+    document.getElementById("title").classList.add("changed");
+
+    document.getElementById("mainText").innerHTML = `
+      ここに来た時点で、記録はあなたを含んでいます。<br><br>
+      もう「読む前」には戻れません。<br><br>
+      戻ることは可能です。<br>
+      ですが、それは出口ではありません。<br><br>
+      本当に、それでいいのですか？<br>
+    `;
+
+    document.getElementById("subText").innerText = "Record Updated.";
+    document.body.style.background = "#05070d";
+    document.body.style.filter = "blur(0.3px)";
+  }, 4000);
+</script>
 
 </body>
 </html>
