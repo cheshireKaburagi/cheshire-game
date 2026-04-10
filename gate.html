@@ -81,6 +81,8 @@
     const trueEndSeen = localStorage.getItem("cheshire_true_end") === "seen";
     const seenForbidden = localStorage.getItem("cheshire_seen_forbidden") === "true";
     const gate = document.getElementById("gate");
+    const hour = new Date().getHours();
+    const isNight = (hour >= 0 && hour <= 4);
 
     function openArchive(event) {
       if (event) event.preventDefault();
@@ -97,7 +99,7 @@
     if (trueEndSeen) {
       gate.innerHTML = `
         <div class="eyebrow">FORBIDDEN ARCHIVE</div>
-        <h2 id="title">入室が許可されました</h2>
+        <h2 id="title">${isNight ? "……まだ起きてるの？" : "立ち入りが許可されました"}</h2>
         <p>記録の深部に到達したことを確認しました。</p>
         <p>鍵の照合が完了しています。</p>
         <a class="btn" href="#" onclick="openArchive(event)">禁書を開く</a>
