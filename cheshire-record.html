@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>チェシャ猫の巣 - 違和感の記録</title>
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --panel: rgba(18, 20, 27, 0.92);
+      --panel-soft: rgba(14, 16, 22, 0.88);
+      --text: #e8ebf2;
+      --sub: #b6bfd1;
+      --accent: #8cb7ff;
+      --accent2: #c49bff;
+      --danger: #ff8f8f;
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(140,183,255,0.12), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(196,155,255,0.10), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.04), transparent 35%),
+        linear-gradient(180deg, #0c0d13 0%, #090a0e 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 100% 4px;
+      opacity: 0.25;
+      mix-blend-mode: screen;
+    }
+
+    body.embed-mode {
+      min-height: auto;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(140,183,255,0.08), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(196,155,255,0.08), transparent 25%),
+        linear-gradient(180deg, #0c0d13 0%, #090a0e 100%);
+    }
+
+    body.embed-mode::before {
+      opacity: 0.18;
+    }
+
+    .wrap {
+      width: min(960px, calc(100% - 24px));
+      margin: 24px auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    body.embed-mode .wrap {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      gap: 0;
+    }
+
+    .title-card,
+    .game-card,
+    .footer-card,
+    .site-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .title-card {
+      padding: 22px 24px;
+    }
+
+    .site-card {
+      padding: 20px 22px;
+      background: var(--panel-soft);
+    }
+
+    body.embed-mode .title-card,
+    body.embed-mode .footer-card {
+      display: none;
+    }
+
+    body.embed-mode .game-card {
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+      box-shadow: none;
+      background: transparent;
+      backdrop-filter: none;
+      padding: 16px;
+    }
+
+    body.embed-mode .site-card {
+      margin: 16px;
+      border-radius: 20px;
+      box-shadow: none;
+    }
+
+    .eyebrow {
+      color: var(--sub);
+      letter-spacing: 0.16em;
+      font-size: 12px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      margin: 0;
+      line-height: 1.12;
+      letter-spacing: 0.03em;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 42px);
+    }
+
+    h2 {
+      font-size: clamp(22px, 4vw, 30px);
+    }
+
+    .subtitle,
+    .site-copy,
+    .site-note {
+      margin-top: 10px;
+      color: var(--sub);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .site-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .ghost-link,
+    .primary-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .primary-link {
+      border: 1px solid rgba(140,183,255,0.35);
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(140,183,255,0.16), rgba(255,255,255,0.05));
+    }
+
+    .ghost-link {
+      border: 1px solid var(--border);
+      color: var(--sub);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .primary-link:hover,
+    .ghost-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .game-card {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--sub);
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .screen {
+      min-height: 340px;
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top, rgba(140,183,255,0.09), transparent 35%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.embed-mode .screen {
+      min-height: 320px;
+    }
+
+    .screen.glitch::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0,
+          transparent 8px,
+          rgba(255,255,255,0.02) 8px,
+          rgba(255,255,255,0.02) 9px
+        );
+      animation: flicker 0.16s linear 4;
+      pointer-events: none;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-8px); opacity: 0.15; }
+      50% { transform: translateX(10px); opacity: 0.22; }
+      100% { transform: translateX(0); opacity: 0.08; }
+    }
+
+    .speaker {
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .text {
+      font-size: clamp(18px, 2.4vw, 24px);
+      line-height: 1.9;
+      white-space: pre-wrap;
+      min-height: 170px;
+    }
+
+    .hint {
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      color: var(--text);
+      border-radius: 18px;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.5;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(140,183,255,0.5);
+      background: linear-gradient(180deg, rgba(140,183,255,0.12), rgba(255,255,255,0.04));
+    }
+
+    button.secondary:hover {
+      border-color: rgba(196,155,255,0.5);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      width: auto;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .footer-card {
+      padding: 14px 18px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .endmark {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--danger);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+    }
+
+    .code-block {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 640px) {
+      .screen { min-height: 400px; padding: 18px; }
+      .text { min-height: 220px; }
+      .site-actions,
+      .controls { flex-direction: column; }
+      .controls button,
+      .site-actions a { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="title-card">
+      <div class="eyebrow">Mini Visual Novel</div>
+      <h1>チェシャ猫の巣 - 違和感の記録</h1>
+      <div class="subtitle">
+        一本道ではなく、選択肢で少しずつ世界の見え方がズレていく短編ゲーム。<br>
+        ブラウザでそのまま動く一枚ファイル版。セーブはブラウザ内に自動保存。<br>
+        この版は、HPに埋め込みやすいように <strong>埋め込みモード</strong> にも対応。
+      </div>
+    </section>
+
+    <section class="site-card" id="siteGuideCard">
+      <div class="eyebrow">Website Integration</div>
+      <h2>HPに入れるなら「禁書室の手前」か「記録室の奥」が自然</h2>
+      <div class="site-copy">
+        世界観的には、いきなりトップに置くより <strong>“見つけてしまうもの”</strong> として置く方が強いです。<br>
+        いちばん自然なのは、<strong>記録室の奥にある隠し断片</strong> として入れる形。次点で、<strong>禁書室に入る前の試し読み</strong> っぽく置く形です。
+      </div>
+      <div class="site-note">
+        HPに置くやり方はシンプルで、このHTMLを別ファイルとして置いて、ページ側で iframe 表示します。<br>
+        埋め込み時は URL の最後に <strong>?embed=1</strong> を付けると、見出しなどが自動で簡略表示になります。
+      </div>
+      <div class="code-block">&lt;iframe
+  src="/games/cheshire-record.html?embed=1"
+  width="100%"
+  height="920"
+  style="border:none; border-radius:20px; overflow:hidden;"
+  loading="lazy"
+&gt;&lt;/iframe&gt;</div>
+      <div class="site-actions">
+        <a class="primary-link" href="#" id="embedPreviewBtn">埋め込み表示を試す</a>
+        <a class="ghost-link" href="#" id="normalPreviewBtn">通常表示に戻す</a>
+      </div>
+    </section>
+
+    <section class="game-card">
+      <div class="meta">
+        <div class="pill">形式: ノベルゲーム</div>
+        <div class="pill">想定プレイ時間: 5〜10分</div>
+        <div class="pill" id="statusPill">状態: 初回起動</div>
+      </div>
+
+      <div class="screen" id="screen">
+        <div class="speaker" id="speaker">SYSTEM</div>
+        <div class="text" id="text"></div>
+        <div class="hint" id="hint"></div>
+      </div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="controls">
+        <button class="secondary" id="restartBtn">最初からやり直す</button>
+        <button class="secondary" id="clearSaveBtn">セーブを消す</button>
+      </div>
+    </section>
+
+    <section class="footer-card">
+      使い方: このHTMLファイルを保存して、ダブルクリックで開けば遊べる。<br>
+      改造もしやすいように、物語データは JavaScript の <strong>SCENES</strong> にまとめてある。<br>
+      HPに置く場合は、このファイルをアップして iframe で呼び出すのがいちばん楽。
+    </section>
+  </div>
+
+  <script>
+    const SCENES = {
+      start: {
+        speaker: "SYSTEM",
+        text: "『チェシャ猫の巣』へようこそ。\n\nこれは記録なのか、記憶なのか。\nそれとも、まだ名前のない違和感なのか。",
+        hint: "最初の選択で導入が少し変わります。",
+        choices: [
+          { label: "机の上のメモを見る", next: "memo" },
+          { label: "扉の向こうの気配を確かめる", next: "door" },
+          { label: "いきなりチェシャ鏑木を呼ぶ", next: "call" }
+        ]
+      },
+
+      memo: {
+        speaker: "M",
+        text: "『ねえチェっちゃん。\nこのメモ、さっきまで無地じゃなかった？』\n\n紙には、今しがた書かれたみたいな文字が浮かんでいる。\n——“読んだ時点で一行足される”。",
+        hint: "紙を見るか、鏑木に渡すかを選べます。",
+        choices: [
+          { label: "最後の一行まで読む", next: "memo_read", effect: { glitch: true } },
+          { label: "鏑木に見せる", next: "kaburagi_memo" }
+        ]
+      },
+
+      door: {
+        speaker: "M",
+        text: "扉の向こうで、誰かが一度だけ通った気配がした。\n\nでも足音は、二回ぶん残っている。\n\n『ねえチェっちゃん、いまの……片方だけ遅れて来た？』",
+        hint: "確認するほど、数え方が危うくなります。",
+        choices: [
+          { label: "足音を数える", next: "count_steps", effect: { glitch: true } },
+          { label: "扉から離れる", next: "step_back" }
+        ]
+      },
+
+      call: {
+        speaker: "チェシャ鏑木",
+        text: "『はいどーも、チェシャ鏑木です。……と、言いたいところですが』\n\n『急に呼ぶ時ほど、あまり良いものは来ません』\n\n鏑木は微笑んでいるのに、丸眼鏡の向こうの目だけが笑っていない。",
+        hint: "ここから探索の向きを選べます。",
+        choices: [
+          { label: "“良くないもの”の正体を聞く", next: "badthing" },
+          { label: "今日の巣の様子を聞く", next: "today_nest" }
+        ]
+      },
+
+      memo_read: {
+        speaker: "SYSTEM",
+        text: "最後の一行には、こう書いてあった。\n\n——“いま読んだその一文は、最初から書かれていない”。\n\n紙を裏返すと、裏にも同じ文字がある。\nだが筆跡だけが、こちらのものに似ていた。",
+        hint: "自分の記録にするか、燃やすか。",
+        choices: [
+          { label: "メモをポケットにしまう", next: "pocket_note" },
+          { label: "暖炉で燃やす", next: "burn_note" }
+        ]
+      },
+
+      kaburagi_memo: {
+        speaker: "チェシャ鏑木",
+        text: "『……またMですね』\n\nメモを受け取った鏑木は、一度だけ紙を伏せた。\n\n『こういう文章は、読んだ人の内側に置かれるんです。\n手元から消しても、消えたことにはなりません』",
+        hint: "鏑木の忠告を信じるかどうか。",
+        choices: [
+          { label: "信じて、そのまま返してもらう", next: "pocket_note" },
+          { label: "信じない。内容を書き写す", next: "copy_note", effect: { glitch: true } }
+        ]
+      },
+
+      count_steps: {
+        speaker: "SYSTEM",
+        text: "一、二、三。\n\n四つ目だけ、遠くからではなく“後ろ”から聞こえた。\n\n振り向いても、そこには本棚しかない。\nだが本の隙間に、こちらを見ていた気配だけがゆっくり閉じた。",
+        hint: "追うか、見なかったことにするか。",
+        choices: [
+          { label: "本棚の隙間をのぞく", next: "bookshelf_eye" },
+          { label: "鏑木を呼ぶ", next: "kaburagi_after_steps" }
+        ]
+      },
+
+      step_back: {
+        speaker: "チェシャ鏑木",
+        text: "『正解です』\n\nいつの間にか背後に立っていた鏑木が、静かに言う。\n\n『数えなかったなら、まだ間に合います。\nこの巣では、認識しないことが防御になる場合がありますから』",
+        hint: "このまま話すか、それでも確かめるか。",
+        choices: [
+          { label: "防御について詳しく聞く", next: "badthing" },
+          { label: "やっぱり扉を開ける", next: "open_door", effect: { glitch: true } }
+        ]
+      },
+
+      badthing: {
+        speaker: "チェシャ鏑木",
+        text: "『正体が分かるものなら、まだ扱いやすいんです』\n\n『厄介なのは、名前より先に影響だけが来るものですね。\n例えば、数が合わないとか。\n紙に覚えのない筆跡があるとか。\n外の春が、ここでは“侵食”として届くとか』",
+        hint: "外のことを聞くか、ここに留まる理由を聞くか。",
+        choices: [
+          { label: "“外の春”って何？", next: "spring_erosion" },
+          { label: "どうしてここから出ないの？", next: "why_not_leave" }
+        ]
+      },
+
+      today_nest: {
+        speaker: "チェシャ鏑木",
+        text: "『今日は静かな方ですよ』\n\n『本が三冊ほど題名を失って、廊下が一度だけ逆向きになったくらいです』\n\nMが小さく息をのむ。\nその反応を見て、鏑木だけが少し楽しそうに目を細めた。",
+        hint: "題名を失った本か、逆向きの廊下か。",
+        choices: [
+          { label: "題名を失った本を見に行く", next: "lost_titles" },
+          { label: "逆向きの廊下を見に行く", next: "reverse_hall" }
+        ]
+      },
+
+      spring_erosion: {
+        speaker: "チェシャ鏑木",
+        text: "『咲く、という言葉が必ずしも救いを意味しないことがあります』\n\n『色づくこと、広がること、染み出すこと。\nそれら全部が“春”の顔をして来る日もあるんですよ』",
+        hint: "かなり世界観寄せの分岐です。",
+        choices: [
+          { label: "それでも綺麗なら見たい", next: "ending_flower" },
+          { label: "見ない方がいい気がする", next: "ending_safe" }
+        ]
+      },
+
+      why_not_leave: {
+        speaker: "チェシャ鏑木",
+        text: "鏑木は少しだけ黙った。\n\n『出られない、ではなく……出るべきではない、が近いでしょうか』\n\n『外に持ち出すと、外の方が壊れてしまうものもありますから』",
+        hint: "踏み込むほど核心に近づきます。",
+        choices: [
+          { label: "それって、あなた自身のこと？", next: "ending_core" },
+          { label: "それ以上は聞かない", next: "ending_safe" }
+        ]
+      },
+
+      pocket_note: {
+        speaker: "SYSTEM",
+        text: "メモをしまった瞬間、胸元が少しだけ重くなる。\n\n文字は見えない。だが、読まれ終えた文章だけが内側に残った感触がある。\n\n次にメモを開いた時、差出人の欄には自分の名前が追加されていた。",
+        hint: "短い終わりへ進みます。",
+        choices: [
+          { label: "記録を受け入れる", next: "ending_record" }
+        ]
+      },
+
+      burn_note: {
+        speaker: "SYSTEM",
+        text: "紙はよく燃えた。\n\n灰も残らなかった。\nだが暖炉の奥から、紙がめくれる音だけがしばらく続いていた。\n\nその夜、眠る直前に頭の中で一文だけ増えた。\n——“燃やした記録は、体内に保管される”。",
+        hint: "燃やしても終わらないタイプの結末です。",
+        choices: [
+          { label: "終わる", next: "ending_record" }
+        ]
+      },
+
+      copy_note: {
+        speaker: "SYSTEM",
+        text: "書き写した瞬間、元の紙から文字が消えた。\n\n代わりに、書き写したはずの紙の最後に、まだ書いていない一文が現れる。\n\n——“複製ではなく、移動である”。",
+        hint: "触ったぶんだけ近づいた結末。",
+        choices: [
+          { label: "終わる", next: "ending_record" }
+        ]
+      },
+
+      bookshelf_eye: {
+        speaker: "SYSTEM",
+        text: "本棚の隙間には、目はなかった。\n\nその代わり、覗き込んでいた自分の視線だけが、隙間の向こうに取り残されていた。\n\n瞬きをした時、まだ“向こう側”の自分だけが一拍遅れてまばたく。",
+        hint: "かなり危ない終わり方へ行けます。",
+        choices: [
+          { label: "もう一度覗く", next: "ending_eye" },
+          { label: "鏑木に助けを求める", next: "kaburagi_after_steps" }
+        ]
+      },
+
+      kaburagi_after_steps: {
+        speaker: "チェシャ鏑木",
+        text: "『見ましたね』\n\n『では、今から“見なかった人”として振る舞ってください。\n完全には戻りませんが、輪郭くらいは保てます』\n\n鏑木の言葉は妙に優しい。\n優しいのに、どこか手遅れを前提にしている。",
+        hint: "従うか、反発するか。",
+        choices: [
+          { label: "従う", next: "ending_safe" },
+          { label: "反発して真実を見る", next: "ending_eye", effect: { glitch: true } }
+        ]
+      },
+
+      open_door: {
+        speaker: "SYSTEM",
+        text: "扉の先には廊下があった。\n\nただし、その廊下は“こちら側”に向かって伸びていた。\n\n進んでも近づかない。戻っても離れない。\n\n足元には、自分のものではない影だけが先に着いている。",
+        hint: "進むか閉じるか。",
+        choices: [
+          { label: "影を追う", next: "ending_core" },
+          { label: "扉を閉める", next: "ending_safe" }
+        ]
+      },
+
+      lost_titles: {
+        speaker: "SYSTEM",
+        text: "背表紙から題名だけが綺麗に消えた三冊の本。\n\n一冊だけ、表紙の中央に丸眼鏡のような擦れ跡がある。\n\n開くと中身は白紙なのに、なぜか“読んだ記憶”だけがあとから生えてくる。",
+        hint: "読むか、棚に戻すか。",
+        choices: [
+          { label: "白紙の本を読む", next: "ending_record" },
+          { label: "見なかったことにして戻す", next: "ending_safe" }
+        ]
+      },
+
+      reverse_hall: {
+        speaker: "M",
+        text: "『ねえチェっちゃん。\n廊下って普通、向こうに続くものだよね？』\n\nそこにあるのは、歩くたびに“後ろ”が増えていく廊下だった。\n進行方向だけが、ずっと決まらない。",
+        hint: "Mに任せるか、鏑木に任せるか。",
+        choices: [
+          { label: "Mについていく", next: "ending_eye" },
+          { label: "鏑木の指示を待つ", next: "ending_safe" }
+        ]
+      },
+
+      ending_record: {
+        speaker: "END // 記録",
+        text: "記録は消えなかった。\n\n紙から消しても、火にくべても、別の場所へ移るだけだった。\n\nそして最後には、こう残る。\n\n『読んだ者が、次の紙になる』",
+        hint: "END 1 / 記録化エンド",
+        ending: true
+      },
+
+      ending_eye: {
+        speaker: "END // 観測",
+        text: "見た。\n\nその瞬間、見ていた側と見られていた側の境目が少しだけ崩れた。\n\n次からは、鏡や窓に映る自分が、ほんのわずかに先回りする。\n\n観測は、たいてい片道だ。",
+        hint: "END 2 / 観測エンド",
+        ending: true
+      },
+
+      ending_safe: {
+        speaker: "END // 先送り",
+        text: "今日はまだ、壊れないで済んだ。\n\n知らなかったことにしておけば、輪郭は保てる。\n\nただし、先送りされた違和感は消えない。\n\n扉の向こうでは、まだ数の合わない足音が待っている。",
+        hint: "END 3 / 先送りエンド",
+        ending: true
+      },
+
+      ending_core: {
+        speaker: "END // 核",
+        text: "ここから出ないのではない。\n出ると、外の方がもたない。\n\nその意味を理解した瞬間、巣は牢でも避難所でもなくなる。\n\nそれは、存在を隔てるための形だった。\n\nそして鏑木は最後まで、ただ人間のように微笑んでいた。",
+        hint: "END 4 / 核心エンド",
+        ending: true
+      },
+
+      ending_flower: {
+        speaker: "END // 春侵食",
+        text: "それは綺麗だった。\n\n花が咲くみたいに、色が世界の輪郭へゆっくり染み込んでいく。\n\nだが再生と呼ぶには、あまりにも静かに別のものへ置き換わっていた。\n\n美しさは、ときどき救済ではなく侵食の顔をしている。",
+        hint: "END 5 / 春侵食エンド",
+        ending: true
+      }
+    };
+
+    const textEl = document.getElementById("text");
+    const speakerEl = document.getElementById("speaker");
+    const hintEl = document.getElementById("hint");
+    const choicesEl = document.getElementById("choices");
+    const screenEl = document.getElementById("screen");
+    const statusPill = document.getElementById("statusPill");
+    const restartBtn = document.getElementById("restartBtn");
+    const clearSaveBtn = document.getElementById("clearSaveBtn");
+    const embedPreviewBtn = document.getElementById("embedPreviewBtn");
+    const normalPreviewBtn = document.getElementById("normalPreviewBtn");
+
+    const SAVE_KEY = "cheshire_nest_minigame_save";
+
+    function saveState(sceneId) {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ sceneId }));
+    }
+
+    function loadState() {
+      try {
+        return JSON.parse(localStorage.getItem(SAVE_KEY));
+      } catch {
+        return null;
+      }
+    }
+
+    function clearSave() {
+      localStorage.removeItem(SAVE_KEY);
+    }
+
+    function applyEmbedMode(enabled) {
+      document.body.classList.toggle("embed-mode", enabled);
+    }
+
+    function detectEmbedMode() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("embed") === "1") return true;
+      try {
+        return window.self !== window.top;
+      } catch {
+        return true;
+      }
+    }
+
+    function renderScene(sceneId) {
+      const scene = SCENES[sceneId];
+      if (!scene) return;
+
+      saveState(sceneId);
+      speakerEl.textContent = scene.speaker || "SYSTEM";
+      textEl.textContent = scene.text || "";
+      hintEl.textContent = scene.hint || "";
+      choicesEl.innerHTML = "";
+      statusPill.textContent = scene.ending ? "状態: エンディング到達" : "状態: プレイ中";
+
+      if (scene.ending) {
+        const btn = document.createElement("button");
+        btn.textContent = "最初に戻る";
+        btn.addEventListener("click", () => renderScene("start"));
+        choicesEl.appendChild(btn);
+
+        const mark = document.createElement("div");
+        mark.className = "endmark";
+        mark.textContent = "RECORD CLOSED";
+        hintEl.appendChild(document.createElement("br"));
+        hintEl.appendChild(mark);
+        return;
+      }
+
+      for (const choice of scene.choices || []) {
+        const btn = document.createElement("button");
+        btn.textContent = choice.label;
+        btn.addEventListener("click", () => {
+          if (choice.effect?.glitch) {
+            screenEl.classList.remove("glitch");
+            void screenEl.offsetWidth;
+            screenEl.classList.add("glitch");
+            setTimeout(() => screenEl.classList.remove("glitch"), 700);
+          }
+          renderScene(choice.next);
+        });
+        choicesEl.appendChild(btn);
+      }
+    }
+
+    restartBtn.addEventListener("click", () => renderScene("start"));
+    clearSaveBtn.addEventListener("click", () => {
+      clearSave();
+      renderScene("start");
+    });
+
+    embedPreviewBtn?.addEventListener("click", (event) => {
+      event.preventDefault();
+      applyEmbedMode(true);
+    });
+
+    normalPreviewBtn?.addEventListener("click", (event) => {
+      event.preventDefault();
+      applyEmbedMode(false);
+    });
+
+    applyEmbedMode(detectEmbedMode());
+
+    const saved = loadState();
+    renderScene(saved?.sceneId && SCENES[saved.sceneId] ? saved.sceneId : "start");
+  </script>
+</body>
+</html>
