@@ -60,6 +60,7 @@
       color: #e8ebf2;
       border: 1px solid rgba(140,183,255,0.5);
       background: rgba(140,183,255,0.12);
+      cursor: pointer;
     }
 
     .sub {
@@ -76,46 +77,48 @@
     <p>記録の整合性を確認しています。</p>
   </div>
 
-<script>
-  const trueEndSeen = localStorage.getItem("cheshire_true_end") === "seen";
-  const seenForbidden = localStorage.getItem("cheshire_seen_forbidden") === "true";
-  const gate = document.getElementById("gate");
+  <script>
+    const trueEndSeen = localStorage.getItem("cheshire_true_end") === "seen";
+    const seenForbidden = localStorage.getItem("cheshire_seen_forbidden") === "true";
+    const gate = document.getElementById("gate");
 
-  function openArchive() {
-    document.body.style.transform = "scale(1.02)";
-    document.body.style.opacity = "0";
-    document.body.style.filter = "blur(6px)";
+    function openArchive(event) {
+      if (event) event.preventDefault();
 
-    setTimeout(() => {
-      location.href = "https://cheshirekaburagi.github.io/cheshire-game/inner.html";
-    }, 500);
-  }
+      document.body.style.transform = "scale(1.02)";
+      document.body.style.opacity = "0";
+      document.body.style.filter = "blur(6px)";
 
-  if (trueEndSeen) {
-    gate.innerHTML = `
-      <div class="eyebrow">FORBIDDEN ARCHIVE</div>
-      <h2 id="title">入室が許可されました</h2>
-      <p>記録の深部に到達したことを確認しました。</p>
-      <p>鍵の照合が完了しています。</p>
-      <a class="btn" href="#" onclick="openArchive()">禁書を開く</a>
-      <div class="sub">${seenForbidden ? "※ あなたはすでに記録されています" : "※ 内部ページのパスはあとで調整できます"}</div>
-    `;
+      setTimeout(() => {
+        location.href = "https://cheshirekaburagi.github.io/cheshire-game/inner.html";
+      }, 500);
+    }
 
-    setTimeout(() => {
-      const title = document.getElementById("title");
-      if (title) {
-        title.innerText = "……本当に？";
-      }
-    }, 1500);
+    if (trueEndSeen) {
+      gate.innerHTML = `
+        <div class="eyebrow">FORBIDDEN ARCHIVE</div>
+        <h2 id="title">入室が許可されました</h2>
+        <p>記録の深部に到達したことを確認しました。</p>
+        <p>鍵の照合が完了しています。</p>
+        <a class="btn" href="#" onclick="openArchive(event)">禁書を開く</a>
+        <div class="sub">${seenForbidden ? "※ あなたはすでに記録されています" : "※ 内部ページのパスはあとで調整できます"}</div>
+      `;
 
-  } else {
-    gate.innerHTML = `
-      <div class="eyebrow">FORBIDDEN ARCHIVE</div>
-      <h2>入室できません</h2>
-      <p>この部屋は、特定の記録を読了した者にのみ開かれます。</p>
-      <p>先に記録室の奥を確認してください。</p>
-    `;
-  }
-</script>
+      setTimeout(() => {
+        const title = document.getElementById("title");
+        if (title) {
+          title.innerText = "……本当に？";
+        }
+      }, 1500);
+
+    } else {
+      gate.innerHTML = `
+        <div class="eyebrow">FORBIDDEN ARCHIVE</div>
+        <h2>入室できません</h2>
+        <p>この部屋は、特定の記録を読了した者にのみ開かれます。</p>
+        <p>先に記録室の奥を確認してください。</p>
+      `;
+    }
+  </script>
 </body>
 </html>
